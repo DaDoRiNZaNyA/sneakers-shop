@@ -1,7 +1,28 @@
 import Card from '../components/Card';
 
 function Home(props) {
-  const { items, searchValue, onChangeSearchInput, onFavorite, onAdToCart } = props;
+  const { items, searchValue, onChangeSearchInput, onFavorite, onAdToCart, isLoading } = props;
+
+  const renderItems = () => {
+    return (
+      isLoading
+      ? [...Array(10)].map((_, index) => (
+        <Card key={index} isLoading={true} />
+      ))
+      :items.filter((item) => item.title.toLowerCase().includes(searchValue.toLowerCase())).map((obj) => (
+        <Card
+          key={obj.title}
+          title={obj.title}
+          price={obj.price}
+          imageUrl={obj.imageUrl}
+          onFavorite={(item) => onFavorite(obj)}
+          onClickPlus={(item) => onAdToCart(obj)}
+          isLoading={isLoading}
+          id = {obj.id}
+        />
+      ))
+    )
+  }
 
   return (
     <div className="content p-40">
@@ -14,21 +35,7 @@ function Home(props) {
       </div>
 
       <div className="d-flex flex-wrap">
-        {
-          items
-            .filter((item) => item.title.toLowerCase().includes(searchValue.toLowerCase()))
-            .map((obj) => (
-              <Card
-                key={obj.title}
-                title={obj.title}
-                price={obj.price}
-                imageUrl={obj.imageUrl}
-                onFavorite={(item) => onFavorite(obj)}
-                onClickPlus={(item) => onAdToCart(obj)}
-                id = {obj.id}
-              />
-            ))
-        }
+        {renderItems()}
       </div>
     </div>
   );
