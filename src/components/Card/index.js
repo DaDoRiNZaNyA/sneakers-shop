@@ -4,18 +4,17 @@ import AppContext from "../../context";
 import styles from './Card.module.scss';
 
 function Card(props) {
-  const { title, imageUrl, price, onFavorite, onClickPlus, favorited = false, id, isLoading} = props;
-  const [isFavorite, setIsFavorite] = useState(favorited);
-  const { isItemAdded, setIsItemAdded } = useContext(AppContext);
+  const { title, imageUrl, price, onFavorite, onClickPlus, id, isLoading } = props;
+  const { favorites, isItemAdded } = useContext(AppContext);
+  const isFavorite = favorites.some((item) => item.id === id);
 
 
   const onPlus = () => {
-    onClickPlus({ title, imageUrl, price });
+    onClickPlus({ title, imageUrl, price, id });
   };
 
   const onClickFavorite = () => {
     onFavorite({ title, imageUrl, price, id });
-    setIsFavorite(!isFavorite);
   };
 
   return (

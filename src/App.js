@@ -26,15 +26,28 @@ function App() {
     fetchData();
   }, []);
 
-  const onAdToCart = (obj) => {
+  const onAdToCart = async (obj) => {
     if (cartItems.find((favObj) => favObj.id === obj.id)) {
-      axios.delete(`https://649a7e73bf7c145d0238e7ab.mockapi.io/cart/${obj.id}`);
-      setCartItems((prev) => prev.filter((item) => item.id !== obj.id));
+      try {
+        setCartItems((prev) => prev.filter((item) => item.id !== obj.id));
+        const response = await axios.get('https://649a7e73bf7c145d0238e7ab.mockapi.io/cart');
+        const mockItems = response.data;
+        const mockId = mockItems.find(product => product.id === obj.id.toString());
+        await axios.delete(`https://649a7e73bf7c145d0238e7ab.mockapi.io/cart/${mockId.mockId}`);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
-      axios.post('https://649a7e73bf7c145d0238e7ab.mockapi.io/cart', obj);
-      setCartItems((prev) => [...prev, obj]);
+      try {
+        setCartItems((prev) => [...prev, obj]);
+        await axios.post('https://649a7e73bf7c145d0238e7ab.mockapi.io/cart', obj);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
+  
+  
 
   const onFavorite = (obj) => {
     if (favorites.find((favObj) => favObj.id === obj.id)) {
@@ -48,11 +61,19 @@ function App() {
   const onChangeSearchInput = (event) => {
     setSearchValue(event.target.value);
   };
-
-  const deleteItem = (id) => {
-    axios.delete(`https://649a7e73bf7c145d0238e7ab.mockapi.io/cart/${id}`);
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  
+  const deleteItem = async (id) => {
+    try {
+      setCartItems((prev) => prev.filter((item) => item.id !== id));
+      const response = await axios.get('https://649a7e73bf7c145d0238e7ab.mockapi.io/cart');
+      const mockItems = response.data;
+      const mockId = mockItems.find(product => product.id === id.toString());
+      await axios.delete(`https://649a7e73bf7c145d0238e7ab.mockapi.io/cart/${mockId.mockId}`);
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
 
   const isItemAdded = (id) => {
     return cartItems.some((obj) => Number(obj.id) === Number(id));
